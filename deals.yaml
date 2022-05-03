@@ -1,0 +1,11 @@
+bundle:
+  item_sku: atv
+  bundle_quantity: 3
+  discount_quantity: 2
+discount:
+  item_sku: ipd
+  discount_price: 499.99
+  discount_quantity: 5
+accessory:
+  item_sku: mbp
+  bonus_item_sku: vga
