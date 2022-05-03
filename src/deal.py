@@ -30,8 +30,10 @@ class DiscountDeal(Deal):
 
     def apply(self, cart: List[Item]) -> List[Item]:
         logger.info(f'Applying all discount deals.')
-        return [Item(sku='DSC', name=self.description, price=-self.discount) for item in cart if self.associated_item is item]
-
+        item_quantity = len(list(filter(lambda item, key=self.associated_item.sku: item.sku == key, cart)))
+        if item_quantity >= self.discount_quantity:
+            return [Item(sku='DSC', name=self.description, price=-self.discount)] * item_quantity
+        return list()
 class BundleDeal(Deal):
     def __init__(self, associated_item: Item, bundle_quantity: int, discount_quantity: int) -> None:
         self.associated_item = associated_item
@@ -49,15 +51,21 @@ class BundleDeal(Deal):
     def apply(self, cart: List[Item]) -> List[Item]:
         logger.info(f'Applying all bundle deals.')
         matching_items = filter(lambda item, key=self.associated_item.sku: item.sku == key, cart)
-        return [Item(sku='DSC', name=self.description, price=-self.discount) for x in list(matching_items)[::self.bundle_quantity]]
+        return [Item(sku='DSC', name=self.description, price=-self.discount)] * (len(list(matching_items)) // self.bundle_quantity)
             
 class AccessoryDeal(Deal):
     def __init__(self, associated_item: Item, bonus_item: Item) -> None:
         self.associated_item = associated_item
         self.bonus_item = deepcopy(bonus_item)
-        self.bonus_item.price = 0.0
+        self.bonus_item.price *= -1
     
     def apply(self, cart: List[Item]) -> List[Item]:
         logger.info(f'Applying all accessory deals.')
-        return [self.bonus_item for item in cart if item is self.associated_item]
+        # Do we need to check if the vga is in cart already to apply the discount? 
+        item_quantity = len(list(filter(lambda item, key=self.associated_item.sku: item.sku == key, cart)))
+        bonus_item_quantity = len(list(filter(lambda item, key=self.bonus_item.sku: item.sku == key, cart)))
+        
+        applied_discount_quantity = min(item_quantity, bonus_item_quantity)
+
+        return [self.bonus_item] * applied_discount_quantity
                 
