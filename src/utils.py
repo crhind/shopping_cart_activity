@@ -7,20 +7,24 @@ from src.item import Item
 
 
 def load_items(filename: str) -> Dict[str, Item]:
+    '''
+    Reads the items yaml file and returns the corresponding dictionary.
+    Dictionary mapping is item_sku: Item instance
+    '''
     items = dict()
     with open(filename, 'r') as f:
-        for k,v in yaml.safe_load(f).items():
-            # print(f'k: {k}, v: {v}')
+        for k, v in yaml.safe_load(f).items():
             items[k] = Item(sku=k, name=v['name'], price=float(v['price']))
     return items
 
 
 def load_deals(filename: str, items: Dict[str, Item]) -> Set[Deal]:
+    '''Reads the deals yaml file and return the set of currently deals.'''
     deals = list()
     with open(filename, 'r') as f:
         for k, v in yaml.safe_load(f).items():
-            # print(f'k: {k}, v: {v}')
             associated_item = items[v.pop('item_sku')]
+            # The below functionality could be shifted out to a factory.
             if k == 'bundle':
                 deal = BundleDeal(
                     associated_item=associated_item,
