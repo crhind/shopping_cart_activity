@@ -19,23 +19,25 @@ class Checkout:
         print("Cart: \n")
         for item in self._cart:
             print(f'  {item}')
-        print(f"current total - {self.total}", end='\n\n')
 
     @property
     def total(self) -> None:
         cart_total = sum([item.price for item in self._cart])
         discount_total = sum([item.price for item in self._apply_deals()])
+        
         print(f'Cart total: {cart_total}')
         print(f'Discount total: {discount_total}')
+        
         return cart_total + discount_total
 
     def scan(self, line_item: Item) -> None:
+        print(f'Adding item "{line_item.sku}"')
         self._cart.append(line_item) 
      
     def _apply_deals(self) -> List[Item]:
         applied_deals = list()
         for deal in self.deals:
             deals = deal.apply(self.cart)
-            print(f'{deal.__class__.__name__} deals - {deals}')
+            print(f'{type(deal).__name__} deals - {deals}')
             applied_deals.extend(deals)
         return applied_deals    

@@ -6,13 +6,12 @@ from src.deal import AccessoryDeal, BundleDeal, Deal, DiscountDeal
 from src.item import Item
 
 
-def load_items(filename: str) -> List[Item]:
+def load_items(filename: str) -> Dict[str, Item]:
     items = dict()
     with open(filename, 'r') as f:
         for k,v in yaml.safe_load(f).items():
-            print(f'k: {k}, v: {v}')
+            # print(f'k: {k}, v: {v}')
             items[k] = Item(sku=k, name=v['name'], price=float(v['price']))
-    print(items)
     return items
 
 
@@ -20,7 +19,7 @@ def load_deals(filename: str, items: Dict[str, Item]) -> Set[Deal]:
     deals = list()
     with open(filename, 'r') as f:
         for k, v in yaml.safe_load(f).items():
-            print(f'k: {k}, v: {v}')
+            # print(f'k: {k}, v: {v}')
             associated_item = items[v.pop('item_sku')]
             if k == 'bundle':
                 deal = BundleDeal(
@@ -43,7 +42,6 @@ def load_deals(filename: str, items: Dict[str, Item]) -> Set[Deal]:
             else: 
                 raise ValueError(f'Invalid deal keyword - {k}')
             deals.append(deal)
-    print(deals)
     return set(deals)
 
         
