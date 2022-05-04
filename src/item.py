@@ -3,6 +3,7 @@ from dataclasses import dataclass
 
 @dataclass
 class Item:
+    '''Generic container class for representing Items.'''
     sku: str
     name: str
     price: float
